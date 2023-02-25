@@ -8,3 +8,4 @@ export { default as ContextProvider } from './ContextProvider';
 export { default as QuestionType } from './QuestionType';
 export { default as QuestionBox } from './QuestionBox';
 export { default as Choices } from './Choices';
+export { default as DropZone } from './DropZone';

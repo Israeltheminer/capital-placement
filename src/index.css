@@ -1,22 +1,31 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-*, .MuiTypography-root{
+*,
+.MuiTypography-root {
    font-family: 'Poppins', sans-serif;
 }
 
-.question-list > li:first-child  {
+.question-list > li:first-child {
    padding-top: 0;
 }
 
-.left-shadow{
+.left-shadow {
    box-shadow: 0px -10px 10px 0px #dddddd73;
 }
 .MuiAutocomplete-listbox {
-    color: #979797;
-    font-size: 14px;
+   color: #979797;
+   font-size: 14px;
 }
-.question-type .MuiAutocomplete-listbox .MuiAutocomplete-option[aria-selected="true"].Mui-focused, .question-type .MuiAutocomplete-listbox .MuiAutocomplete-option[aria-selected="true"]{
-   background-color: #9C4DE2;
+.question-type
+   .MuiAutocomplete-listbox
+   .MuiAutocomplete-option[aria-selected='true'].Mui-focused,
+.question-type
+   .MuiAutocomplete-listbox
+   .MuiAutocomplete-option[aria-selected='true'] {
+   background-color: #9c4de2;
    color: #fff;
+}
+.image-height {
+   height: calc(100% - 55px);
 }

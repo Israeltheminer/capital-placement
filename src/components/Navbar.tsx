@@ -12,11 +12,11 @@ const Navbar = ({
   setActiveLink: Function;
 }) => {
   return (
-    <nav className="h-[100px] flex shadow-lg">
+    <nav className="h-[80px] flex shadow-lg">
       {navItems.map(({ name }, index) => (
         <div className="flex" key={'nav' + index}>
           <div
-            className="h-[100px] min-w-[250px] grid place-content-center cursor-pointer"
+            className="h-full min-w-[250px] grid place-content-center cursor-pointer"
             style={{
               backgroundColor: name === activeLink ? '#00635B' : 'transparent',
             }}
@@ -30,7 +30,7 @@ const Navbar = ({
             </span>
           </div>
           {name !== activeLink ? (
-            <div className="border-r h-[60px] my-auto"></div>
+            <div className="border-r h-[50px] my-auto"></div>
           ) : (
             <div className="bg-[#00635b] my-auto w-[20px] h-[20px] rotate-45 right-[10px] relative"></div>
           )}
