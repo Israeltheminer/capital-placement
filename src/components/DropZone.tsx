@@ -23,7 +23,7 @@ const DropZone = () => {
    const onDrop = useCallback((acceptedFiles: File[]) => {
       const file = acceptedFiles[0];
       const allowedTypes = ['image/jpeg', 'image/png'];
-      const maxFileSize = 1 * 1024 * 102422; // 1MB in bytes
+      const maxFileSize = 1 * 1024 * 1024; // 1MB in bytes
 
       if (
          file &&
@@ -55,13 +55,15 @@ const DropZone = () => {
    return (
       <>
          {uploadedImage ? (
-            <div className="border shadow-md min-h-[280px] overflow-hidden rounded-2xl max-w-[526px] relative max-h-80">
-               <img
-                  src={`${uploadedImage}`}
-                  alt="uploaded"
-                  className="mx-auto object-contain image-height"
-               />
-               <div className="bg-white w-full px-4 py-3 absolute bottom-0 left-0 border-t">
+            <div className="border shadow-md overflow-hidden rounded-2xl w-fit mx-auto">
+               <div className="max-h-[250px] aspect-video">
+                  <img
+                     src={`${uploadedImage}`}
+                     alt="uploaded"
+                     className="mx-auto object-contain image-height aspect-video h-full relative scale-[1.05]"
+                  />
+               </div>
+               <div className="w-full bg-white px-4 py-3 relative z-10 border-t ">
                   <span
                      className="flex items-center w-fit cursor-pointer"
                      onClick={() => {
@@ -78,7 +80,7 @@ const DropZone = () => {
          ) : (
             <Card heading="Upload cover image">
                <div
-                  className="border text-center border-black border-dashed my-4 rounded-md w-[400px] pt-10 h-[170px] pb-12"
+                  className="border text-center border-black border-dashed my-4 rounded-md w-full pt-10 h-[170px] pb-12"
                   {...getRootProps()}
                   style={{
                      borderColor: error.message === '' ? '#000000' : '#A80000',
