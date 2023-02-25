@@ -1,33 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import {useContext, useState} from 'react';
+import AppContext from './AppContext';
+import {ApplicationForm, Card, Navbar, Sidenav} from './components';
+import QuestionModal from './components/QuestionModal';
+
+type Option = {
+  label: string;
+};
+
+const options: Option[] = [
+  { label: 'Paragraph' },
+  { label: 'Short answer' },
+  { label: 'Yes/No' },
+  { label: 'Dropdown' },
+  { label: 'Multiple choice' },
+  { label: 'Date' },
+  { label: 'Number' },
+  { label: 'File upload' },
+  { label: 'Video question' },
+];
 
 function App() {
-  const [count, setCount] = useState(0)
-
+   const [activeLink, setActiveLink] = useState("Application Form")
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <>
+    <main className='flex items-stretch mb-auto grow relative'>
+      <Sidenav/>
+      <div className='flex-1'>
+      <Navbar {...{activeLink, setActiveLink}}/>
+      {
+        activeLink === "Application Form" &&
+        <ApplicationForm/>
+      }
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
+    </main>
+      <QuestionModal/>
+      </>
   )
 }
 
