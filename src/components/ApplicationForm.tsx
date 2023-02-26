@@ -7,7 +7,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 function ApplicationForm() {
    const { questions } = useContext(AppContext);
    return (
-      <div className="ApplicationForm grid gap-10 px-10 py-20 w-fit">
+      <div className="ApplicationForm grid gap-10 px-[8%] py-20 w-fit">
          <DropZone />
          <Card heading="Personal Information">
             <Questions type="personal" details={questions.personal} />
