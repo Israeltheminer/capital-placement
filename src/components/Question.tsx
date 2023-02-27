@@ -2,6 +2,8 @@ import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import { Checkbox, FormControlLabel, Typography } from '@mui/material';
 import { QuestionDetails } from '../ts';
+import { useContext } from 'react';
+import AppContext from '../AppContext';
 
 interface Props {
    type: 'personal' | 'additional' | 'profile';
@@ -71,6 +73,7 @@ const internalCheckboxLabel = { inputProps: { 'aria-label': 'internal' } };
 const mandatoryCheckboxLabel = { inputProps: { 'aria-label': 'mandatory' } };
 
 const Question = ({ type, detail }: Props) => {
+   const { editQuestion } = useContext(AppContext);
    return (
       <li className="pt-[20px] mb-[20px]" style={{ maxHeight: detail.type ? '90px' : '70px' }}>
          {detail.type && (
@@ -98,46 +101,62 @@ const Question = ({ type, detail }: Props) => {
          )}
          <div className="flex items-center justify-between">
             <p className="font-semibold text-base max-w-[320px]">{detail.question}</p>
-            {!detail.default && (
+            {detail.default ? (
                <div className="flex gap-7 items-center">
-                  {type === 'personal' && (
-                     <FormControlLabel
-                        {...internalCheckboxLabel}
-                        control={
-                           <Checkbox
-                              size="small"
-                              sx={{
-                                 padding: 0,
-                                 color: '#D4D9E4',
-                                 '&.Mui-checked': {
-                                    color: '#087B2F',
-                                 },
-                              }}
+                  {!detail.mandatory ? (
+                     <>
+                        {type === 'personal' && (
+                           <FormControlLabel
+                              {...internalCheckboxLabel}
+                              control={
+                                 <Checkbox
+                                    size="small"
+                                    sx={{
+                                       padding: 0,
+                                       color: '#D4D9E4',
+                                       '&.Mui-checked': {
+                                          color: '#087B2F',
+                                       },
+                                    }}
+                                 />
+                              }
+                              label={<FormLabel label="Internal" />}
                            />
-                        }
-                        label={<FormLabel label="Internal" />}
-                     />
-                  )}
-                  {type === 'profile' && (
-                     <FormControlLabel
-                        {...mandatoryCheckboxLabel}
-                        control={
-                           <Checkbox
-                              size="small"
-                              sx={{
-                                 padding: 0,
-                                 color: '#D4D9E4',
-                                 '&.Mui-checked': {
-                                    color: '#087B2F',
-                                 },
-                              }}
+                        )}
+                        {type === 'profile' && (
+                           <FormControlLabel
+                              {...mandatoryCheckboxLabel}
+                              control={
+                                 <Checkbox
+                                    size="small"
+                                    sx={{
+                                       padding: 0,
+                                       color: '#D4D9E4',
+                                       '&.Mui-checked': {
+                                          color: '#087B2F',
+                                       },
+                                    }}
+                                 />
+                              }
+                              label={<FormLabel label="Mandatory" />}
                            />
-                        }
-                        label={<FormLabel label="Mandatory" />}
-                     />
+                        )}
+                        <FormControlLabel control={<AntSwitch />} label={<FormLabel label="Hide" />} />
+                     </>
+                  ) : (
+                     <></>
                   )}
-                  {type !== 'additional' && <FormControlLabel control={<AntSwitch />} label={<FormLabel label="Hide" />} />}
-                  {type === 'additional' && <img src="/pen.svg" alt="" className="scale-80" />}
+               </div>
+            ) : (
+               <div className="flex items-center justify-between">
+                  <img
+                     src="/pen.svg"
+                     alt=""
+                     className="scale-80 cursor-pointer"
+                     onClick={() => {
+                        editQuestion(`${detail?.id}`, type);
+                     }}
+                  />
                </div>
             )}
          </div>

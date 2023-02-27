@@ -6,17 +6,21 @@ import MaxChoices from './MaxChoices';
 
 const QuestionModal = () => {
    const { modal, hideModal, addQuestion, deleteNewQuestion, newQuestion } = useContext(AppContext);
-
+   const [errorStatus, setErrorStatus] = useState({
+      question: false,
+      choice: false,
+   });
    return (
       <Modal open={modal.open} onClose={hideModal}>
          <div className="w-fit absolute min-w-[450px] top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
             <Card heading="Create Custom Questions">
                <div className="flex flex-col gap-5 pb-5">
                   <QuestionType />
-                  <QuestionBox />
-                  {newQuestion?.[modal.parent].type === 'dropDown' || newQuestion?.[modal.parent].type === 'multipleChoice' ? (
+                  <QuestionBox error={errorStatus.question} />
+                  {newQuestion?.[modal.parent].type === 'dropDown' ||
+                  newQuestion?.[modal.parent].type === 'multipleChoice' ? (
                      <>
-                        <Choices />
+                        <Choices error={errorStatus.choice} />
                         <MaxChoices />
                      </>
                   ) : (
@@ -42,8 +46,15 @@ const QuestionModal = () => {
                            },
                         }}
                         onClick={() => {
-                           hideModal();
-                           addQuestion(newQuestion?.[modal.parent], modal.parent);
+                           const addStatus = addQuestion(modal.parent);
+                           setErrorStatus(() => ({
+                              choice: addStatus.choiceError,
+                              question: addStatus.questionError,
+                           }));
+                           if (addStatus.closeModal) {
+                              hideModal();
+                              deleteNewQuestion(modal.parent);
+                           }
                         }}
                      >
                         Save

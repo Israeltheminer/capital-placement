@@ -23,7 +23,7 @@ const MaxChoices = () => {
             variant="outlined"
             fullWidth={true}
             placeholder="Enter number of choice allowed here"
-            type="number"
+            type="Number"
             InputProps={{
                inputMode: 'numeric',
                sx: {

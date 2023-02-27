@@ -10,31 +10,40 @@ const ContextProvider = ({ children }: { children: ReactNode }) => {
       profile: QuestionDetails[];
    }>({
       personal: [
-         { question: 'First Name', default: true },
-         { question: 'Last Name', default: true },
-         { question: 'Email', default: true },
-         { question: 'Phone' },
-         { question: 'Nationality' },
-         { question: 'Current Residence' },
-         { question: 'ID Number' },
-         { question: 'Date of Birth ' },
-         { question: 'Gender' },
+         { question: 'First Name', default: true, mandatory: true },
+         { question: 'Last Name', default: true, mandatory: true },
+         { question: 'Email', default: true, mandatory: true },
+         { question: 'Phone', default: true },
+         { question: 'Nationality', default: true },
+         { question: 'Current Residence', default: true },
+         { question: 'ID Number', default: true },
+         { question: 'Date of Birth ', default: true },
+         { question: 'Gender', default: true },
       ],
       additional: [
          {
             type: 'paragraph',
             question: 'Please tell me about yourself in less than 500 words',
+            id: '12-kmf-g-134t31n324-23r23r',
          },
          {
             type: 'dropDown',
             question: 'Please select the year of graduation from the list below',
+            id: '12-kmf-g-451fg1g-23r23r',
+            choices: ['2023', '2022', '2021', '2020'],
+            maxChoices: 2,
          },
          {
             type: 'yesNo',
             question: 'Have you ever been rejected by the UK embassy?',
+            id: '12-kmf-g-1dfds9t31-23r75r',
          },
       ],
-      profile: [{ question: 'Education' }, { question: 'Experience' }, { question: 'Resume' }],
+      profile: [
+         { question: 'Education', default: true },
+         { question: 'Experience', default: true },
+         { question: 'Resume', default: true },
+      ],
    });
    const [modal, setModal] = useState<{
       open: boolean;
@@ -51,7 +60,7 @@ const ContextProvider = ({ children }: { children: ReactNode }) => {
       personal: {
          type: 'paragraph',
          question: '',
-         choices: ['AAAAAAAAA', 'BBBBBBBBBB'],
+         choices: [],
          other: true,
          maxChoices: 1,
       },
@@ -88,31 +97,96 @@ const ContextProvider = ({ children }: { children: ReactNode }) => {
       newQuestion,
       hideModal: () => setModal((prev) => ({ ...prev, open: false })),
       openModal: (parent) => setModal(() => ({ parent, open: true })),
-      addQuestion: (question, type) =>
-         setQuestions((prev) => ({
-            ...prev,
-            [type]: [...prev?.[type], { ...question, id: generateUUID() }],
-         })),
+      addQuestion: (parent) => {
+         const { choices, maxChoices, other, question, type, position, id } = newQuestion?.[parent];
+         console.log(position);
+         const questionError = question.trim().length < 1;
+         if (type === 'dropDown' || type === 'multipleChoice') {
+            const choiceError = choices.length < 2;
+            if (!choiceError && !questionError) {
+               const newQuestion = id
+                  ? { choices, maxChoices, position, other, question, type, id }
+                  : { choices, maxChoices, other, question, type, id: generateUUID() };
+               const newQuestions = id
+                  ? questions?.[parent].filter((question) => question.id !== id)
+                  : questions?.[parent];
+               typeof position === 'number'
+                  ? newQuestions.splice(position, 0, newQuestion)
+                  : newQuestions.push(newQuestion);
+               setTimeout(() => {
+                  setQuestions({
+                     ...questions,
+                     [parent]: [...newQuestions],
+                  });
+               }, 0.1);
+            }
+            return {
+               choiceError,
+               questionError,
+               closeModal: !questionError && !choiceError,
+            };
+         } else {
+            if (!questionError) {
+               const newQuestion = id ? { position, question, type, id } : { question, type, id: generateUUID() };
+               const newQuestions = id
+                  ? questions?.[parent].filter((question) => question.id !== id)
+                  : questions?.[parent];
+               typeof position === 'number'
+                  ? newQuestions.splice(position, 0, newQuestion)
+                  : newQuestions.push(newQuestion);
+               setTimeout(() => {
+                  setQuestions({
+                     ...questions,
+                     [parent]: [...newQuestions],
+                  });
+               }, 0.1);
+            }
+            return {
+               choiceError: false,
+               questionError,
+               closeModal: !questionError,
+            };
+         }
+      },
       removeQuestion: (id, type) =>
          setQuestions((prev) => ({
             ...prev,
-            [type]: prev?.[type].filter((question) => {
-               question.id !== id;
-            }),
+            [type]: prev?.[type].filter((question) => question.id !== id),
          })),
-      deleteNewQuestion: (key) => {
-         setNewQuestion((prev) => {
-            return {
-               ...prev,
-               [key]: {
-                  type: '',
-                  question: '',
-                  choices: [],
-                  other: true,
-                  maxChoices: 1,
-               },
-            };
+      editQuestion: (id, type) => {
+         let position: number = 0;
+         const editedQuestions = questions?.[type].filter((question, index) => {
+            if (question.id === id) position = index;
+            return question.id === id;
          });
+         setNewQuestion((prev) => ({
+            ...prev,
+            [type]: {
+               ...editedQuestions[0],
+               position,
+            },
+         }));
+         setModal(() => ({
+            open: true,
+            parent: type,
+         }));
+      },
+      deleteNewQuestion: (key) => {
+         const { id } = newQuestion?.[key];
+         setQuestions((prev) => ({
+            ...prev,
+            [key]: prev?.[key].filter((question) => question.id !== id),
+         }));
+         setNewQuestion((prev) => ({
+            ...prev,
+            [key]: {
+               type: '',
+               question: '',
+               choices: [],
+               other: true,
+               maxChoices: 1,
+            },
+         }));
       },
       editNewQuetion: <PropKey extends QuestionKey>({ parent, key, payload }: NewQuestionProps<PropKey>) => {
          setNewQuestion((prev) => {
@@ -120,9 +194,11 @@ const ContextProvider = ({ children }: { children: ReactNode }) => {
             if (key === 'choices') {
                editedQuestion.choices = payload as string[];
             } else if (key === 'maxChoices') {
-               editedQuestion.maxChoices = payload as Number;
+               editedQuestion.maxChoices = payload as number;
             } else if (key === 'other') {
-               editedQuestion.other = !editedQuestion.other;
+               editedQuestion.other = payload as boolean;
+            } else if (key === 'disqualify') {
+               editedQuestion.disqualify = payload as boolean;
             } else if (key === 'type') {
                editedQuestion.type = payload as QuestionType;
             } else if (key === 'question') {
